@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#b7d6ab', //@Sander maybe if you can make a minimalistic floral design (a 2 color background) so it looks like vines and what not
   },
   welcomeSection: {
-    paddingTop: 80,
+    paddingTop: 60,
     paddingHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
