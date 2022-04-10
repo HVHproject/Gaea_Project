@@ -14,6 +14,8 @@ const AppNavigation  = createStackNavigator(
 );
 //import * as Font from 'expo-font';
 
+
+
 export default createAppContainer(AppNavigation);
 
 

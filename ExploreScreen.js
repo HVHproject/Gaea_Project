@@ -1,12 +1,68 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import Logo from './assets/images/logo.png';
-import Geolocation from 'react-native-geolocation-service';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
+import React, {Component} from 'react'
+import { render } from 'react-dom';
+
+let WeatherState = {
+  isLoading: true,
+  temperature: 0,
+  weatherCondition: null,
+  error: null
+};
+
+let State = {
+  location: null,
+  geocode: null,
+  errorMessage: ""
+};
+
+const API_KEY = 'e850b2da0cbbe5f12183c48286bfee3c';
+
+getLocationAsync = async () => {
+  let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  if (status !== 'granted') {
+    this.setState({
+      errorMessage: 'Permission to access location was denied',
+    });
+  }
+  let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.Highest});
+  const { latitude , longitude } = location.coords;
+  getGeocodeAsync({latitude, longitude})
+  State.location = {latitude, longitude};
+  return true;
+};
+
+getGeocodeAsync = async (location) => {
+  let geocode = await Location.reverseGeocodeAsync(location);
+  State.geocode = geocode;
+}
+
+async function fetchWeatherAsync(){
+  let didLocationRun = await getLocationAsync ();
+  let lat = State.location.latitude;
+  let lon = State.location.longitude;
+  //console.log("\nFETCHING THE WEATHER:\nState OBJ: \n", State, "\nLocation OBJ: \n", State.location, "\nlat and lon: \n", lat, lon);
+  fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
+      console.log("\nJSON: \n", json);
+      WeatherState['temperature'] = json.main.temp,
+      WeatherState['weatherCondition'] = json.weather[0].main, 
+      WeatherState['isLoading'] = false})
+      //rerender();
+      return true;
+}
+
+let didWeatherRun = fetchWeatherAsync();
 
 
 export default function App() {
-  return (
 
+  let placement = State.location;
+  let geocode = State.geocode;
+  console.log("\nFIRST CALL\n State OBJ: \n", State, "\nPlacement OBJ: \n", placement, "\nWeather OBJ: \n", WeatherState);
+  return (
     
     <View style={styles.container}>  
       <View style={styles.titleContainer}>
@@ -31,25 +87,68 @@ export default function App() {
       </View>
 
       {/* Weather Section */}
+      {/* WE DO NOT HAVE THE FORECAST, STILL MUST GET */}
       <View style={styles.weatherBox}> 
-      <Text style={{fontSize: 20}}>Weather</Text>
-        <View style={styles.weathersWeatherBox}>
-          <View style={styles.weatherItem}>
-            <Text style={{fontSize: 40}}>☁️</Text>
-            <Text>Today</Text>
-            <Text>Temp</Text>
+      <Text style={styles.weatherWord}>Weather</Text>
+        <ScrollView style={styles.weathersWeatherBox} horizontal={true}>
+          
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Today</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
           </View>
-          <View style={styles.weatherItem}>
-          <Text style={{fontSize: 40}}>🌨️</Text>
-            <Text>Tomorrow</Text>
-            <Text>Temp</Text>
+
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Tomorrow</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
           </View>
-          <View style={styles.weatherItem}>
-          <Text style={{fontSize: 40}}>🌤️</Text>
-            <Text>Tomorrow + 1</Text>
-            <Text>Temp</Text>
+          
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Two days from now</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
           </View>
-        </View>
+
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Three days from now</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
+          </View>
+          
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Four days from now</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
+          </View>
+          
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Five days from now</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
+          </View>
+          
+          <View style={styles.weatherSpacing}>
+            <View style={styles.weatherItem}>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
+              <Text>Six days from now</Text>
+              <Text>{WeatherState.temperature} C</Text>
+            </View>
+          </View>
+
+        </ScrollView>
       </View>
 
       {/* News Section */}
@@ -145,21 +244,42 @@ const styles = StyleSheet.create({
   weatherBox: {
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingLeft: 20,
     paddingVertical: 20,
-    backgroundColor: '#ddd',
     borderRadius: 20,
     flexDirection: 'column',
-  },
-  weathersWeatherBox: {
-    flexDirection: 'row',
     
   },
+
+  weathersWeatherBox: {
+    flexDirection: 'row',
+    paddingTop: 10,
+    
+
+  },
   weatherItem: {
-    backgroundColor: '#ccc',
-    borderRadius: 60,
-    padding: 20,
+    backgroundColor: '#5ebf64',
+    padding: 30,
+    paddingHorizontal: 40,
     alignItems: 'center',
+    borderRadius: 30,
+    
+  },
+
+  weatherWord: {
+    color: '#00fa81',
+    fontSize: 40,
+    fontWeight: 'bold',
+    backgroundColor: '#a0c791',
+    padding: 10,
+  },
+
+  weatherEmoji: {
+    fontSize: 20,
+  },
+
+  weatherSpacing: {
+    paddingHorizontal: 10,
   },
 
   instaContainer: {
