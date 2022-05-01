@@ -9,6 +9,10 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 
 export default function Nav() {
 
+  //const API_KEY =`${process.env.REACT_APP_API_KEY_YT}`
+  //console.log("API", API_KEY)
+
+
   const[place, setPlaceDetails] = React.useState({
     icon: "",
     address: "",
@@ -57,7 +61,7 @@ export default function Nav() {
         console.log(place.icon)
       }}
       query={{
-        key: 'AIzaSyBqzNuTcmVCk6UbQ9lAjTZU89eAAOoury4',
+        key: 'insertKeyHere',
         language: 'en',
         components: "country:us",
         types: 'restaurant',
