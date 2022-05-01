@@ -1,6 +1,5 @@
 # Gaea_Project
 An app for discovering the world around you. This is a capstone Joseph and Aleksander are working on for the Spring 2022 semester.
-We went into this with 0 knowledge on app development and javascript.
 
 ## How do I run this app?
 #### Step 1: Install Expo on your computer and Expo/Expo Go on your device
@@ -29,7 +28,7 @@ Weather API : Ctrl/Command + F "API_KEY" and replace all with the Open Weather A
 
 #### Step 6: Run "npm start" in the terminal
 
-#### Step 7: Scan the QR code with and app (optionally you can install an android emulator on your computer and press a in the terminal.)
+#### Step 7: Scan the QR code with an app (optionally you can install an android emulator on your computer and press a in the terminal.)
 At this point everything should be good to go! If you run into issues, please submit an issue.  
 
 #### Step 8 (optional): Install an Android emulator to run the app on your computer.
