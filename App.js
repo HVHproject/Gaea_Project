@@ -5,11 +5,13 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import HomeScreen from "./HomeScreen";
 import ExploreScreen from "./ExploreScreen";
 import Logo from './assets/images/logo.png';
+import Nav from "./Nav";
 
 const AppNavigation  = createStackNavigator(
   {
   Home: HomeScreen,
-  Explore: ExploreScreen
+  Explore: ExploreScreen,
+  Navigate: Nav
   }
 );
 //import * as Font from 'expo-font';

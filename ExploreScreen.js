@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import React, {Component} from 'react'
 import { render } from 'react-dom';
+import MapView from 'react-native-maps';
 
 let WeatherState = {
   isLoading: true,
@@ -54,7 +55,7 @@ async function fetchWeatherAsync(){
       return true;
 }
 
-let didWeatherRun = fetchWeatherAsync();
+let didWeatherRun = fetchWeatherAsync(); 
 
 
 export default function App() {
@@ -205,7 +206,18 @@ export default function App() {
             <Image source={Logo} style={{height: 80, width: 80}} />
           </View>
         </View>
-          
+          <View style ={styles.map}>
+          <Text style={{fontSize: 40}}>Map</Text>
+          <MapView style ={styles.maps}
+            showsUserLocation={true}
+            initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+            }}
+  />
+          </View>
           
 
           
@@ -319,5 +331,13 @@ const styles = StyleSheet.create({
   newsItem: {
     padding: 20,
     flex: 1,
+  },
+
+  map: {
+    alignItems: 'center',
+  },
+  maps: {
+    width: 400,
+    height: 300
   },
 });
