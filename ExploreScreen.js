@@ -8,8 +8,27 @@ import { render } from 'react-dom';
 
 let WeatherState = {
   isLoading: true,
-  temperature: 0,
-  weatherCondition: null,
+  temperature0: 0,
+  temperature1: 0,
+  temperature2: 0,
+  temperature3: 0,
+  temperature4: 0,
+  temperature5: 0,
+  temperature6: 0,
+  time0: null,
+  time1: null,
+  time2: null,
+  time3: null,
+  time4: null,
+  time5: null,
+  time6: null,
+  weatherCondition0: null,
+  weatherCondition1: null,
+  weatherCondition2: null,
+  weatherCondition3: null,
+  weatherCondition4: null,
+  weatherCondition5: null,
+  weatherCondition6: null,
   error: null
 };
 
@@ -45,23 +64,89 @@ async function fetchWeatherAsync(){
   let lat = State.location.latitude;
   let lon = State.location.longitude;
   //console.log("\nFETCHING THE WEATHER:\nState OBJ: \n", State, "\nLocation OBJ: \n", State.location, "\nlat and lon: \n", lat, lon);
-  fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
-      console.log("\nJSON: \n", json);
-      WeatherState['temperature'] = json.main.temp,
-      WeatherState['weatherCondition'] = json.weather[0].main, 
+  fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&units=metric&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
+      //console.log("\nJSON: \n", json);
+      // console.log("\n\n\nHello, here is some data:");
+      // console.log("\n\nDate(json.daily[0].dt*1000).toLocaleString()\n", new Date(json.daily[0].dt*1000).toLocaleString());
+      // console.log("\n\nDate(json.daily[1].dt*1000).toLocaleString()\n", new Date(json.daily[1].dt*1000).toLocaleString());
+      // console.log("\n\njson.daily[0].temp.day\n", json.daily[0].temp.day);
+      // json.weather[0].main,
+      //Day 0 fetch
+      WeatherState['temperature0'] = json.current.temp
+      WeatherState['time0'] = new Date(json.daily[0].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition0'] = json.current.weather[0].main,
+      //Day 1 fetch
+      WeatherState['temperature1'] = json.daily[1].temp.day,
+      WeatherState['time1'] = new Date(json.daily[1].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition1'] = json.daily[1].weather[0].main,
+      //Day 2 fetch
+      WeatherState['temperature2'] = json.daily[2].temp.day,
+      WeatherState['time2'] = new Date(json.daily[2].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition2'] = json.daily[2].weather[0].main,
+      //Day 3 fetch
+      WeatherState['temperature3'] = json.daily[3].temp.day,
+      WeatherState['time3'] = new Date(json.daily[3].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition3'] = json.daily[3].weather[0].main,
+      //Day 4 fetch
+      WeatherState['temperature4'] = json.daily[4].temp.day,
+      WeatherState['time4'] = new Date(json.daily[4].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition4'] = json.daily[4].weather[0].main,
+      //Day 5 fetch
+      WeatherState['temperature5'] = json.daily[5].temp.day,
+      WeatherState['time5'] = new Date(json.daily[5].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition5'] = json.daily[5].weather[0].main,
+      //Day 6 fetch
+      WeatherState['temperature6'] = json.daily[6].temp.day,
+      WeatherState['time6'] = new Date(json.daily[6].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition6'] = json.daily[6].weather[0].main,
+
       WeatherState['isLoading'] = false})
-      //rerender();
+      return true;
+}
+
+function fetchWeather(lat, lon){
+  //console.log("\nFETCHING THE WEATHER:\nState OBJ: \n", State, "\nLocation OBJ: \n", State.location, "\nlat and lon: \n", lat, lon);
+  fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&units=metric&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
+      //Day 0 fetch
+      WeatherState['temperature0'] = json.current.temp
+      WeatherState['time0'] = new Date(json.daily[0].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition0'] = json.current.weather[0].main,
+      //Day 1 fetch
+      WeatherState['temperature1'] = json.daily[1].temp.day,
+      WeatherState['time1'] = new Date(json.daily[1].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition1'] = json.daily[1].weather[0].main,
+      //Day 2 fetch
+      WeatherState['temperature2'] = json.daily[2].temp.day,
+      WeatherState['time2'] = new Date(json.daily[2].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition2'] = json.daily[2].weather[0].main,
+      //Day 3 fetch
+      WeatherState['temperature3'] = json.daily[3].temp.day,
+      WeatherState['time3'] = new Date(json.daily[3].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition3'] = json.daily[3].weather[0].main,
+      //Day 4 fetch
+      WeatherState['temperature4'] = json.daily[4].temp.day,
+      WeatherState['time4'] = new Date(json.daily[4].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition4'] = json.daily[4].weather[0].main,
+      //Day 5 fetch
+      WeatherState['temperature5'] = json.daily[5].temp.day,
+      WeatherState['time5'] = new Date(json.daily[5].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition5'] = json.daily[5].weather[0].main,
+      //Day 6 fetch
+      WeatherState['temperature6'] = json.daily[6].temp.day,
+      WeatherState['time6'] = new Date(json.daily[6].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
+      WeatherState['weatherCondition6'] = json.daily[6].weather[0].main,
+
+      WeatherState['isLoading'] = false})
       return true;
 }
 
 let didWeatherRun = fetchWeatherAsync();
 
-
 export default function App() {
 
   let placement = State.location;
   let geocode = State.geocode;
-  console.log("\nFIRST CALL\n State OBJ: \n", State, "\nPlacement OBJ: \n", placement, "\nWeather OBJ: \n", WeatherState);
+  //console.log("\nFIRST CALL\n State OBJ: \n", State, "\nPlacement OBJ: \n", placement, "\nWeather OBJ: \n", WeatherState);
   return (
     
     <View style={styles.container}>  
@@ -94,57 +179,57 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Today</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition0}</Text>
+              <Text>{WeatherState.time0}</Text>
+              <Text>{WeatherState.temperature0} C</Text>
             </View>
           </View>
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Tomorrow</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition1}</Text>
+              <Text>{WeatherState.time1}</Text>
+              <Text>{WeatherState.temperature1} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Two days from now</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition2}</Text>
+              <Text>{WeatherState.time2}</Text>
+              <Text>{WeatherState.temperature2} C</Text>
             </View>
           </View>
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Three days from now</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition3}</Text>
+              <Text>{WeatherState.time3}</Text>
+              <Text>{WeatherState.temperature3} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Four days from now</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition4}</Text>
+              <Text>{WeatherState.time4}</Text>
+              <Text>{WeatherState.temperature4} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Five days from now</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition5}</Text>
+              <Text>{WeatherState.time5}</Text>
+              <Text>{WeatherState.temperature5} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition}</Text>
-              <Text>Six days from now</Text>
-              <Text>{WeatherState.temperature} C</Text>
+              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition6}</Text>
+              <Text>{WeatherState.time6}</Text>
+              <Text>{WeatherState.temperature6} C</Text>
             </View>
           </View>
 
