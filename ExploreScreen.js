@@ -6,6 +6,13 @@ import * as Permissions from 'expo-permissions';
 import React, {Component} from 'react'
 import { render } from 'react-dom';
 
+
+
+
+const API_KEY = 'weatherApiKeyHere';
+const GOOGLE_KEY = 'googleApiKeyHere';
+
+
 let WeatherState = {
   isLoading: true,
   temperature0: 0,
@@ -32,13 +39,45 @@ let WeatherState = {
   error: null
 };
 
+let foodState = {
+  rest0:{
+    name: null,
+    photoref: null,
+    htmlatt: null,
+    rating: 0,
+    coords:{
+      lat: 0,
+      lon: 0
+    }
+  },
+  rest1:{
+    name: null,
+    photoref: null,
+    htmlatt: null,
+    rating: 0,
+    coords:{
+      lat: 0,
+      lon: 0
+    }
+  },
+  rest2:{
+    name: null,
+    photoref: null,
+    htmlatt: null,
+    rating: 0,
+    coords:{
+      lat: 0,
+      lon: 0
+    }
+  }
+};
+
 let State = {
   location: null,
   geocode: null,
   errorMessage: ""
 };
 
-const API_KEY = 'e850b2da0cbbe5f12183c48286bfee3c';
 
 getLocationAsync = async () => {
   let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -59,6 +98,47 @@ getGeocodeAsync = async (location) => {
   State.geocode = geocode;
 }
 
+async function fetchGooglePlaces(){
+  let didLocationRun = await getLocationAsync ();
+  let lat = State.location.latitude;
+  let lon = State.location.longitude;
+  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=3000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
+    console.log("\nJSON: \n", json);
+    //Grab top 3 results names
+    foodState.rest0.name = json.results[0].name;
+    foodState.rest1.name = json.results[1].name;
+    foodState.rest2.name = json.results[2].name;
+
+    //Grab top 3 results coords if we want to use live map opening with these coords
+    foodState.rest0.coords = json.results[0].geometry.location;
+    foodState.rest1.coords = json.results[1].geometry.location;
+    foodState.rest2.coords = json.results[2].geometry.location;
+
+    //Grab top 3 results ratings
+    foodState.rest0.rating = json.results[0].rating;
+    foodState.rest1.rating = json.results[1].rating;
+    foodState.rest2.rating = json.results[2].rating;
+
+    //Grab top 3 results photorefs to pass in googe photo api
+    foodState.rest0.photoref = json.results[0].photos.photo_reference;
+    foodState.rest1.photoref = json.results[1].photos.photo_reference;
+    foodState.rest2.photoref = json.results[2].photos.photo_reference;
+
+    //Grab top 3 attributions for credits
+    foodState.rest0.htmlatt = json.results[0].photos.html_attributions;
+    foodState.rest1.htmlatt = json.results[1].photos.html_attributions;
+    foodState.rest2.htmlatt = json.results[2].photos.html_attributions;
+
+    //There is a ton more data we could use if we find the need.
+    //There is 100% a way we can fine tune this system
+  })
+
+  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=3000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
+    //console.log("\nJSON: \n", json);
+  })
+  return true
+} 
+
 async function fetchWeatherAsync(){
   let didLocationRun = await getLocationAsync ();
   let lat = State.location.latitude;
@@ -66,10 +146,6 @@ async function fetchWeatherAsync(){
   //console.log("\nFETCHING THE WEATHER:\nState OBJ: \n", State, "\nLocation OBJ: \n", State.location, "\nlat and lon: \n", lat, lon);
   fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&units=metric&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
       //console.log("\nJSON: \n", json);
-      // console.log("\n\n\nHello, here is some data:");
-      // console.log("\n\nDate(json.daily[0].dt*1000).toLocaleString()\n", new Date(json.daily[0].dt*1000).toLocaleString());
-      // console.log("\n\nDate(json.daily[1].dt*1000).toLocaleString()\n", new Date(json.daily[1].dt*1000).toLocaleString());
-      // console.log("\n\njson.daily[0].temp.day\n", json.daily[0].temp.day);
       // json.weather[0].main,
       //Day 0 fetch
       WeatherState['temperature0'] = json.current.temp
@@ -140,7 +216,8 @@ function fetchWeather(lat, lon){
       return true;
 }
 
-let didWeatherRun = fetchWeatherAsync();
+//let didWeatherRun = fetchWeatherAsync();
+//let didGoogleRun = fetchGooglePlaces();
 
 export default function App() {
 
@@ -156,20 +233,39 @@ export default function App() {
       <ScrollView>
       
       {/* Food Section */}
-      <View style={styles.foodElement}>
-        <View style={styles.food}>
-          <Text style={{fontSize: 20}}>Restaurant</Text>
-          <Image source={Logo} style={{height: 90, width: 90, borderRadius: 400/2}} />
-        </View>
-        <View style={styles.food}>
-        <Text style={{fontSize: 20}}>Restaurant</Text>
-          <Image source={Logo} style={{height: 90, width: 90, borderRadius: 400/2}} />
-        </View>
-        <View style={styles.food}>
-        <Text style={{fontSize: 20}}>Restaurant</Text>
-          <Image source={Logo} style={{height: 90, width: 90, borderRadius: 400/2}} />
-        </View>
+      <View style={styles.foodBox}> 
+      <Text style={styles.foodWord}>Restaraunt</Text>
+        <ScrollView style={styles.foodsFoodBox} horizontal={true}>
+          
+
+          <View style={styles.foodSpacing}>
+            <View style={styles.foodItem}>
+              <Text>{foodState.rest0.name}</Text>
+              <Image source={Logo} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest0.htmlatt}</Text>
+              <Text>{foodState.rest0.rating}</Text>
+            </View>
+          </View>
+          <View style={styles.foodSpacing}>
+            <View style={styles.foodItem}>
+              <Text>{foodState.rest1.name}</Text>
+              <Image source={Logo} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest1.htmlatt}</Text>
+              <Text>{foodState.rest1.rating}</Text>
+            </View>
+          </View>
+          <View style={styles.foodSpacing}>
+            <View style={styles.foodItem}>
+              <Text>{foodState.rest2.name}</Text>
+              <Image source={Logo} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest2.htmlatt}</Text>
+              <Text>{foodState.rest2.rating}</Text>
+            </View>
+          </View>
+          
+        </ScrollView>
       </View>
+      
 
       {/* Weather Section */}
       {/* WE DO NOT HAVE THE FORECAST, STILL MUST GET */}
@@ -236,64 +332,20 @@ export default function App() {
         </ScrollView>
       </View>
 
-      {/* News Section */}
-      <View style={styles.newsTitleAndBox}>
-      <Text style={{fontSize: 20}}>📰 News 📰</Text>
-      <View style={styles.newsContainer}>
-        <View style={styles.newsItem}>
-          <Text style={{fontSize: 40}}>📰</Text>
-          <Text>Article 1</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Text>
-        </View>
-        <View style={styles.newsItem}>
-          <Text style={{fontSize: 40}}>📰</Text>
-          <Text>Article 2</Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Text>
-        </View>
-        <View style={styles.newsItem}>
-          <Text style={{fontSize: 40}}>📰</Text>
-          <Text>Article 3</Text> 
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Text>
-        </View>
-      </View>
-
-      
-      </View>
       {/* Instagram Section */}
       <View style={styles.instaContainer}>
       <Text style={{fontSize: 20}}>📷 Instagram Photos 📷</Text>
-        <View style={styles.row}>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
+        
+        <View style={styles.explorePhotos}>
+          <Image source={Logo} style={{height: 120, width: 120}} />
         </View>
-        <View style={styles.row}>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
-          <View style={styles.explorePhotos}>
-            <Image source={Logo} style={{height: 80, width: 80}} />
-          </View>
+        <View style={styles.explorePhotos}>
+          <Image source={Logo} style={{height: 120, width: 120}} />
         </View>
-          
-          
+        <View style={styles.explorePhotos}>
+          <Image source={Logo} style={{height: 120, width: 120}} />
+        </View>
 
-          
         </View>
       </ScrollView>
 
@@ -309,23 +361,47 @@ const styles = StyleSheet.create({
   titleContainer: {
     fontSize: 28,
     backgroundColor: '#eee',
-    borderRadius: 20,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  foodElement: {
+
+  foodBox:{
     justifyContent: 'space-evenly',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: '#ccc',
-    borderRadius: 20,
-    flexDirection: 'row',
-  },
-  food: {
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 5,
+    borderRadius: 20,
+    flexDirection: 'column',
   },
+  foodWord:{
+    color: '#212529',
+    fontSize: 30,
+    fontWeight: 'bold',
+    backgroundColor: '#ADB5BD',
+    padding: 10,
+    borderRadius: 20,
+  },
+  foodsFoodBox:{
+    flexDirection: 'row',
+    paddingTop: 10,
+  },
+  foodSpacing:{
+    paddingHorizontal: 5,
+  },
+
+  foodItem:{
+    backgroundColor: '#CED4DA',
+    padding: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderRadius: 30,
+    width: 200, 
+    height: 200,
+    justifyContent: 'space-evenly',
+  },
+
   weatherBox: {
     justifyContent: 'space-evenly',
     alignItems: 'center',
@@ -381,8 +457,8 @@ const styles = StyleSheet.create({
     margin: 4,
     borderWidth: 1,
     borderColor: 'black',
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
   },
 
   row: {
@@ -405,4 +481,7 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
+  
+
+
 });

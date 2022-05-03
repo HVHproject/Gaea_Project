@@ -11,9 +11,7 @@ Apple installation    : https://apps.apple.com/app/expo-go/id982107779
 
 #### Step 3: In that folder, run npm install.
 This should download everything you need to run the project. If errors occur, you may need to install missing packages.  
-As time passes, packages can update or the language can update and something else can break.  
-Below are the packages we use.  
-npm i react-google-autocomplete
+As time passes, packages can update and something could break.  
 
 #### Step 4: Get the needed API keys.
 Weather API : https://openweathermap.org/api  
@@ -22,9 +20,9 @@ Using their free plans is enough for this project to serve its purpose. This app
 
 Make sure these aren't public (if you make a fork of this or share it with friends) so you don't have someone running up your credits!  
 
-#### Step 5: Place the API keys in their needed spots.
-Google API  : Ctrl/Command + F "insertKeyHere" and replace all with the Google API key  
-Weather API : Ctrl/Command + F "API_KEY" and replace all with the Open Weather API key  
+#### Step 5: Place the API keys in their needed spots in the "ExploreScreen.js".
+Weather API : Line 12, replace "weatherApiKeyHere" with your Open Weather API key
+Google API  : Line 13, replace "googleApiKeyHere" with your Google API key
 
 #### Step 6: Run "npm start" in the terminal
 
