@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Linking } from 'react-native';
 import Logo from './assets/images/logo.png';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -11,6 +11,12 @@ import { render } from 'react-dom';
 
 const API_KEY = 'weatherApiKeyHere';
 const GOOGLE_KEY = 'googleApiKeyHere';
+
+let photoSize =
+{
+  foodPhotoMaxHeight: 160,
+  foodPhotoMaxWidth: 160,
+}
 
 
 let WeatherState = {
@@ -102,8 +108,8 @@ async function fetchGooglePlaces(){
   let didLocationRun = await getLocationAsync ();
   let lat = State.location.latitude;
   let lon = State.location.longitude;
-  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=3000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
-    console.log("\nJSON: \n", json);
+  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=2000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
+    //console.log("\nJSON: \n", json);
     //Grab top 3 results names
     foodState.rest0.name = json.results[0].name;
     foodState.rest1.name = json.results[1].name;
@@ -120,17 +126,20 @@ async function fetchGooglePlaces(){
     foodState.rest2.rating = json.results[2].rating;
 
     //Grab top 3 results photorefs to pass in googe photo api
-    foodState.rest0.photoref = json.results[0].photos.photo_reference;
-    foodState.rest1.photoref = json.results[1].photos.photo_reference;
-    foodState.rest2.photoref = json.results[2].photos.photo_reference;
+    foodState.rest0.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[0].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
+    foodState.rest1.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[1].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
+    foodState.rest2.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[2].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
 
     //Grab top 3 attributions for credits
-    foodState.rest0.htmlatt = json.results[0].photos.html_attributions;
-    foodState.rest1.htmlatt = json.results[1].photos.html_attributions;
-    foodState.rest2.htmlatt = json.results[2].photos.html_attributions;
+    foodState.rest0.htmlatt = json.results[0].photos[0].html_attributions;
+    foodState.rest1.htmlatt = json.results[1].photos[0].html_attributions;
+    foodState.rest2.htmlatt = json.results[2].photos[0].html_attributions;
+    //Have to split('"') these and call them as [1] when linking.
+    
 
     //There is a ton more data we could use if we find the need.
     //There is 100% a way we can fine tune this system
+    console.log("\nfoodState: \n", foodState);
   })
 
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=3000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
@@ -216,8 +225,8 @@ function fetchWeather(lat, lon){
       return true;
 }
 
-//let didWeatherRun = fetchWeatherAsync();
-//let didGoogleRun = fetchGooglePlaces();
+let didWeatherRun = fetchWeatherAsync();
+let didGoogleRun = fetchGooglePlaces();
 
 export default function App() {
 
@@ -234,31 +243,31 @@ export default function App() {
       
       {/* Food Section */}
       <View style={styles.foodBox}> 
-      <Text style={styles.foodWord}>Restaraunt</Text>
+      <Text style={styles.foodWord}>Restaurants</Text>
         <ScrollView style={styles.foodsFoodBox} horizontal={true}>
           
 
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
               <Text>{foodState.rest0.name}</Text>
-              <Image source={Logo} style={{height: 80, width: 80}} />
-              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest0.htmlatt}</Text>
+              <Image source={{uri: foodState.rest0.photoref}} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest0.htmlatt)}>Photo credit</Text>
               <Text>{foodState.rest0.rating}</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
               <Text>{foodState.rest1.name}</Text>
-              <Image source={Logo} style={{height: 80, width: 80}} />
-              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest1.htmlatt}</Text>
+              <Image source={{uri: foodState.rest1.photoref}} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest1.htmlatt)}>Photo credit</Text>
               <Text>{foodState.rest1.rating}</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
               <Text>{foodState.rest2.name}</Text>
-              <Image source={Logo} style={{height: 80, width: 80}} />
-              <Text style={{fontSize: 10}}>Photo credit : {foodState.rest2.htmlatt}</Text>
+              <Image source={{uri: foodState.rest2.photoref}} style={{height: 80, width: 80}} />
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest2.htmlatt)}>Photo credit</Text>
               <Text>{foodState.rest2.rating}</Text>
             </View>
           </View>
@@ -371,7 +380,6 @@ const styles = StyleSheet.create({
   foodBox:{
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingVertical: 5,
     borderRadius: 20,
     flexDirection: 'column',
   },
@@ -393,7 +401,7 @@ const styles = StyleSheet.create({
 
   foodItem:{
     backgroundColor: '#CED4DA',
-    padding: 20,
+    padding: 10,
     paddingHorizontal: 20,
     alignItems: 'center',
     borderRadius: 30,
