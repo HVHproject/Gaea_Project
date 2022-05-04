@@ -9,16 +9,35 @@ import { render } from 'react-dom';
 
 
 
-const API_KEY = '';
-const GOOGLE_KEY = '';
+const API_KEY = 'weatherApiKeyHere';
+const GOOGLE_KEY = 'googleApiKeyHere';
 
-class food{
-  constructor(name, photoref, htmlatt, rating, coords) {
+
+class park {
+  constructor(name, photoref, htlmlatt, coords) {
     this.name = name;
     this.photoref = photoref;
-    this.htmlatt = htmlatt;
+    this.htlmlatt = htlmlatt;
+    this.coords = coords;
+  }
+}
+
+class food{
+  constructor(name, photoref, htlmlatt, rating, coords) {
+    this.name = name;
+    this.photoref = photoref;
+    this.htlmlatt = htlmlatt;
     this.rating = rating;
     this.coords = coords;
+  }
+}
+
+class weather{
+  contructor(temp,time,condition,emoji){
+    this.temp = temp;
+    this.time = time;
+    this.condition = condition;
+    this.emoji = emoji;
   }
 }
 
@@ -29,36 +48,17 @@ let photoSize =
 }
 
 
-let WeatherState = {
-  isLoading: true,
-  temperature0: 0,
-  temperature1: 0,
-  temperature2: 0,
-  temperature3: 0,
-  temperature4: 0,
-  temperature5: 0,
-  temperature6: 0,
-  time0: null,
-  time1: null,
-  time2: null,
-  time3: null,
-  time4: null,
-  time5: null,
-  time6: null,
-  weatherCondition0: null,
-  weatherCondition1: null,
-  weatherCondition2: null,
-  weatherCondition3: null,
-  weatherCondition4: null,
-  weatherCondition5: null,
-  weatherCondition6: null,
-  error: null
-};
-
-
+let parkStates = {
+  parks: [new park(), new park(), new park()]
+}
 
 let foodStates = {
   foods: [new food(), new food(), new food()]
+}
+
+let weatherStates = {
+  weathers: [new weather(), new weather(), new weather(), new weather(), new weather(), new weather(), new weather()],
+  isLoading: true,
 }
 
 let State = {
@@ -66,6 +66,7 @@ let State = {
   geocode: null,
   errorMessage: ""
 };
+
 
 
 getLocationAsync = async () => {
@@ -104,9 +105,21 @@ async function fetchGooglePlaces(){
         foodStates.foods[i].rating = json.results[i].rating;
         foodStates.foods[i].coords = json.results[i].geometry.location;
 
-        console.log("\nFood State: \n", foodStates.foods[i]);
+        //console.log("\nFood State: \n", foodStates.foods[i]);
         i = i + 1;
       }
+  })
+
+  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=5000&type=park&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
+    //console.log("\n PARK JSON: \n", json);
+    let i = 0;
+    while(i < 3){
+      parkStates.parks[i].name = json.results[i].name
+      parkStates.parks[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY
+      parkStates.parks[i].htmlatt = json.results[i].photos[0].html_attributions
+      parkStates.parks[i].coords = json.results[i].geometry.location
+      i = i + 1
+    }
   })
   return true
 } 
@@ -119,36 +132,26 @@ async function fetchWeatherAsync(){
   fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&units=metric&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
       //console.log("\nJSON: \n", json);
       // json.weather[0].main,
-      //Day 0 fetch
-      WeatherState['temperature0'] = json.current.temp
-      WeatherState['time0'] = new Date(json.daily[0].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition0'] = json.current.weather[0].main,
-      //Day 1 fetch
-      WeatherState['temperature1'] = json.daily[1].temp.day,
-      WeatherState['time1'] = new Date(json.daily[1].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition1'] = json.daily[1].weather[0].main,
-      //Day 2 fetch
-      WeatherState['temperature2'] = json.daily[2].temp.day,
-      WeatherState['time2'] = new Date(json.daily[2].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition2'] = json.daily[2].weather[0].main,
-      //Day 3 fetch
-      WeatherState['temperature3'] = json.daily[3].temp.day,
-      WeatherState['time3'] = new Date(json.daily[3].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition3'] = json.daily[3].weather[0].main,
-      //Day 4 fetch
-      WeatherState['temperature4'] = json.daily[4].temp.day,
-      WeatherState['time4'] = new Date(json.daily[4].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition4'] = json.daily[4].weather[0].main,
-      //Day 5 fetch
-      WeatherState['temperature5'] = json.daily[5].temp.day,
-      WeatherState['time5'] = new Date(json.daily[5].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition5'] = json.daily[5].weather[0].main,
-      //Day 6 fetch
-      WeatherState['temperature6'] = json.daily[6].temp.day,
-      WeatherState['time6'] = new Date(json.daily[6].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition6'] = json.daily[6].weather[0].main,
+      let i = 0;
+      while(i < 7)
+      {
+        weatherStates.weathers[i].time = new Date(json.daily[i].dt*1000).toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'});
 
-      WeatherState['isLoading'] = false})
+        if(i == 0)
+        {
+          weatherStates.weathers[i].temp = json.current.temp;
+          weatherStates.weathers[i].condition = json.current.weather[0].main;
+        }
+        else{
+          weatherStates.weathers[i].temp = json.daily[i].temp.day;
+          weatherStates.weathers[i].condition = json.daily[i].weather[0].main;
+        }
+
+        weatherStates.weathers[i].emoji = "☁️"
+
+        i = i + 1;
+      }
+      weatherStates.isLoading = false})
       return true;
 }
 
@@ -211,7 +214,7 @@ export default function App() {
           
           
           <View style={styles.foodSpacing}>
-            <View style={styles.foodItem}>
+          <View style={styles.foodItem}>
               <Image source={{uri: foodStates.foods[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
               <Text>{foodStates.foods[0].name}</Text>
               <Text>{foodStates.foods[0].rating} ⭐</Text>
@@ -240,64 +243,63 @@ export default function App() {
       
 
       {/* Weather Section */}
-      {/* WE DO NOT HAVE THE FORECAST, STILL MUST GET */}
       <View style={styles.weatherBox}> 
       <Text style={styles.weatherWord}>Weather</Text>
         <ScrollView style={styles.weathersWeatherBox} horizontal={true}>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition0}</Text>
-              <Text>{WeatherState.time0}</Text>
-              <Text>{WeatherState.temperature0} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[0].condition}</Text>
+              <Text>{weatherStates.weathers[0].time}</Text>
+              <Text>{weatherStates.weathers[0].temp} C</Text>
             </View>
           </View>
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition1}</Text>
-              <Text>{WeatherState.time1}</Text>
-              <Text>{WeatherState.temperature1} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[1].condition}</Text>
+              <Text>{weatherStates.weathers[1].time}</Text>
+              <Text>{weatherStates.weathers[1].temp} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition2}</Text>
-              <Text>{WeatherState.time2}</Text>
-              <Text>{WeatherState.temperature2} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[2].condition}</Text>
+              <Text>{weatherStates.weathers[2].time}</Text>
+              <Text>{weatherStates.weathers[2].temp} C</Text>
             </View>
           </View>
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition3}</Text>
-              <Text>{WeatherState.time3}</Text>
-              <Text>{WeatherState.temperature3} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[3].condition}</Text>
+              <Text>{weatherStates.weathers[3].time}</Text>
+              <Text>{weatherStates.weathers[3].temp} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition4}</Text>
-              <Text>{WeatherState.time4}</Text>
-              <Text>{WeatherState.temperature4} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[4].condition}</Text>
+              <Text>{weatherStates.weathers[4].time}</Text>
+              <Text>{weatherStates.weathers[4].temp} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition5}</Text>
-              <Text>{WeatherState.time5}</Text>
-              <Text>{WeatherState.temperature5} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[5].condition}</Text>
+              <Text>{weatherStates.weathers[5].time}</Text>
+              <Text>{weatherStates.weathers[5].temp} C</Text>
             </View>
           </View>
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
-              <Text style={styles.weatherEmoji}>{WeatherState.weatherCondition6}</Text>
-              <Text>{WeatherState.time6}</Text>
-              <Text>{WeatherState.temperature6} C</Text>
+              <Text style={styles.weatherEmoji}>{weatherStates.weathers[6].condition}</Text>
+              <Text>{weatherStates.weathers[6].time}</Text>
+              <Text>{weatherStates.weathers[6].temp} C</Text>
             </View>
           </View>
 
@@ -308,14 +310,17 @@ export default function App() {
       <View style={styles.instaContainer}>
       <Text style={{fontSize: 20}}>📷 Instagram Photos 📷</Text>
         
+      <Text>{parkStates.parks[0].name}</Text>
         <View style={styles.explorePhotos}>
-          <Image source={Logo} style={{height: 120, width: 120}} />
+          <Image source={{uri: parkStates.parks[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
         </View>
+        <Text>{parkStates.parks[1].name}</Text>
         <View style={styles.explorePhotos}>
-          <Image source={Logo} style={{height: 120, width: 120}} />
+        <Image source={{uri: parkStates.parks[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
         </View>
+        <Text>{parkStates.parks[2].name}</Text>
         <View style={styles.explorePhotos}>
-          <Image source={Logo} style={{height: 120, width: 120}} />
+        <Image source={{uri: parkStates.parks[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
         </View>
 
         </View>
