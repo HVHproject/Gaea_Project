@@ -9,8 +9,8 @@ import { render } from 'react-dom';
 
 
 
-const API_KEY = 'weatherApiKeyHere';
-const GOOGLE_KEY = 'googleApiKeyHere';
+const API_KEY = '';
+const GOOGLE_KEY = '';
 
 let photoSize =
 {
@@ -248,11 +248,11 @@ export default function App() {
           
 
           <View style={styles.foodSpacing}>
-            <View style={styles.foodItem}>
+          <View style={styles.foodItem}>
+              <Image source={{uri: foodState.rest0.photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
               <Text>{foodState.rest0.name}</Text>
-              <Image source={{uri: foodState.rest0.photoref}} style={{height: 80, width: 80}} />
+              <Text>{foodState.rest0.rating} ⭐</Text>
               <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest0.htmlatt)}>Photo credit</Text>
-              <Text>{foodState.rest0.rating}</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
@@ -401,12 +401,12 @@ const styles = StyleSheet.create({
 
   foodItem:{
     backgroundColor: '#CED4DA',
-    padding: 10,
-    paddingHorizontal: 20,
+    //padding: 10,
+    //paddingHorizontal: 20,
     alignItems: 'center',
     borderRadius: 30,
-    width: 200, 
-    height: 200,
+    width: 160, 
+    height: 220,
     justifyContent: 'space-evenly',
   },
 
