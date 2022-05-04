@@ -9,8 +9,8 @@ import openMap from 'react-native-open-maps';
 
 
 
-const API_KEY = '5b153d5512f72f0c4cf380b19a415724';
-const GOOGLE_KEY = 'AIzaSyC-4jHsCAV_bSV1B0bT-SC1jKOaGTFXnqQ';
+const API_KEY = 'weatherApiKeyHere';
+const GOOGLE_KEY = 'googleApiKeyHere';
 
 
 class park {
