@@ -12,6 +12,16 @@ import { render } from 'react-dom';
 const API_KEY = '';
 const GOOGLE_KEY = '';
 
+class food{
+  constructor(name, photoref, htmlatt, rating, coords) {
+    this.name = name;
+    this.photoref = photoref;
+    this.htmlatt = htmlatt;
+    this.rating = rating;
+    this.coords = coords;
+  }
+}
+
 let photoSize =
 {
   foodPhotoMaxHeight: 160,
@@ -45,38 +55,11 @@ let WeatherState = {
   error: null
 };
 
-let foodState = {
-  rest0:{
-    name: null,
-    photoref: null,
-    htmlatt: null,
-    rating: 0,
-    coords:{
-      lat: 0,
-      lon: 0
-    }
-  },
-  rest1:{
-    name: null,
-    photoref: null,
-    htmlatt: null,
-    rating: 0,
-    coords:{
-      lat: 0,
-      lon: 0
-    }
-  },
-  rest2:{
-    name: null,
-    photoref: null,
-    htmlatt: null,
-    rating: 0,
-    coords:{
-      lat: 0,
-      lon: 0
-    }
-  }
-};
+
+
+let foodStates = {
+  foods: [new food(), new food(), new food()]
+}
 
 let State = {
   location: null,
@@ -111,39 +94,19 @@ async function fetchGooglePlaces(){
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=2000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
     //console.log("\nJSON: \n", json);
     //Grab top 3 results names
-    foodState.rest0.name = json.results[0].name;
-    foodState.rest1.name = json.results[1].name;
-    foodState.rest2.name = json.results[2].name;
+    let i = 0;
 
-    //Grab top 3 results coords if we want to use live map opening with these coords
-    foodState.rest0.coords = json.results[0].geometry.location;
-    foodState.rest1.coords = json.results[1].geometry.location;
-    foodState.rest2.coords = json.results[2].geometry.location;
+    while(i < 3)
+    {
+        foodStates.foods[i].name = json.results[i].name;
+        foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
+        foodStates.foods[i].htmlatt = json.results[i].photos[0].html_attributions;
+        foodStates.foods[i].rating = json.results[i].rating;
+        foodStates.foods[i].coords = json.results[i].geometry.location;
 
-    //Grab top 3 results ratings
-    foodState.rest0.rating = json.results[0].rating;
-    foodState.rest1.rating = json.results[1].rating;
-    foodState.rest2.rating = json.results[2].rating;
-
-    //Grab top 3 results photorefs to pass in googe photo api
-    foodState.rest0.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[0].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-    foodState.rest1.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[1].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-    foodState.rest2.photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[2].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-
-    //Grab top 3 attributions for credits
-    foodState.rest0.htmlatt = json.results[0].photos[0].html_attributions;
-    foodState.rest1.htmlatt = json.results[1].photos[0].html_attributions;
-    foodState.rest2.htmlatt = json.results[2].photos[0].html_attributions;
-    //Have to split('"') these and call them as [1] when linking.
-    
-
-    //There is a ton more data we could use if we find the need.
-    //There is 100% a way we can fine tune this system
-    console.log("\nfoodState: \n", foodState);
-  })
-
-  fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=3000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
-    //console.log("\nJSON: \n", json);
+        console.log("\nFood State: \n", foodStates.foods[i]);
+        i = i + 1;
+      }
   })
   return true
 } 
@@ -244,31 +207,31 @@ export default function App() {
       {/* Food Section */}
       <View style={styles.foodBox}> 
       <Text style={styles.foodWord}>Restaurants</Text>
-        <ScrollView style={styles.foodsFoodBox} horizontal={true}>
+      <ScrollView style={styles.foodsFoodBox} horizontal={true}>
           
-
+          
           <View style={styles.foodSpacing}>
-          <View style={styles.foodItem}>
-              <Image source={{uri: foodState.rest0.photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
-              <Text>{foodState.rest0.name}</Text>
-              <Text>{foodState.rest0.rating} ⭐</Text>
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest0.htmlatt)}>Photo credit</Text>
+            <View style={styles.foodItem}>
+              <Image source={{uri: foodStates.foods[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <Text>{foodStates.foods[0].name}</Text>
+              <Text>{foodStates.foods[0].rating} ⭐</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[0].htmlatt)}>Photo credit</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
-              <Text>{foodState.rest1.name}</Text>
-              <Image source={{uri: foodState.rest1.photoref}} style={{height: 80, width: 80}} />
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest1.htmlatt)}>Photo credit</Text>
-              <Text>{foodState.rest1.rating}</Text>
+            <Image source={{uri: foodStates.foods[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <Text>{foodStates.foods[1].name}</Text>
+              <Text>{foodStates.foods[1].rating} ⭐</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[1].htmlatt)}>Photo credit</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
-              <Text>{foodState.rest2.name}</Text>
-              <Image source={{uri: foodState.rest2.photoref}} style={{height: 80, width: 80}} />
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodState.rest2.htmlatt)}>Photo credit</Text>
-              <Text>{foodState.rest2.rating}</Text>
+            <Image source={{uri: foodStates.foods[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <Text>{foodStates.foods[2].name}</Text>
+              <Text>{foodStates.foods[2].rating} ⭐</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[2].htmlatt)}>Photo credit</Text>
             </View>
           </View>
           
