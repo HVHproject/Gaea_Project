@@ -14,19 +14,19 @@ const GOOGLE_KEY = '';
 
 
 class park { 
-  constructor(name, photoref, htlmlatt, coords) {
+  constructor(name, photoref, htmlatt, coords) {
     this.name = name;
     this.photoref = photoref;
-    this.htlmlatt = htlmlatt;
+    this.htmlatt = htmlatt;
     this.coords = coords;
   }
 }
 
 class food{
-  constructor(name, photoref, htlmlatt, rating, coords) {
+  constructor(name, photoref, htmlatt, rating, coords) {
     this.name = name;
     this.photoref = photoref;
-    this.htlmlatt = htlmlatt;
+    this.htmlatt = htmlatt;
     this.rating = rating;
     this.coords = coords;
   }
@@ -131,18 +131,18 @@ async function fetchGooglePlaces(){
     //console.log("\n PARK JSON: \n", json);
     let j = 0;
     while(j < 4){
-
-      if(json.results[j].photos[0]){
-        parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
-        var str = json.results[j].photos[0].html_attributions[0];
-        str = json.results[j].photos[0].html_attributions[0];
-        str = str.split('"');
-        parkStates.parks[j].htmlatt = str[1]
-      }
-      else{
-        parkStates.parks[j].photoref = json.results[i].icon
-        parkStates.parks[j].htmlatt = "https://www.google.com/maps"
-      }
+      //Basically, we need a way to check if the results[i] has photos, if it does, we grab them
+      //If it doesn't we grab results[i].icon as photoref 
+      parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
+      var str = json.results[j].photos[0].html_attributions[0];
+      str = json.results[j].photos[0].html_attributions[0];
+      str = str.split('"');
+      parkStates.parks[j].htmlatt = str[1]
+      //Edge case where photos[] doesn't exist
+      //else{
+        //parkStates.parks[j].photoref = json.results[i].icon
+        //parkStates.parks[j].htmlatt = "https://www.google.com/maps"
+      //}
       parkStates.parks[j].name = json.results[j].name
       parkStates.parks[j].coords = json.results[j].geometry.location;
       j = j + 1
