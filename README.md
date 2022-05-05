@@ -21,8 +21,8 @@ Using their free plans is enough for this project to serve its purpose. This app
 Make sure these aren't public (if you make a fork of this or share it with friends) so you don't have someone running up your credits!  
 
 #### Step 5: Place the API keys in their needed spots in the "ExploreScreen.js".
-Weather API : Line 12, replace "weatherApiKeyHere" with your Open Weather API key
-Google API  : Line 13, replace "googleApiKeyHere" with your Google API key
+Weather API : Line 12, replace "weatherApiKeyHere" with your Open Weather API key  
+Google API  : Line 13, replace "googleApiKeyHere" with your Google API key  
 
 #### Step 6: Run "npm start" in the terminal
 

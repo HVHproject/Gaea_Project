@@ -9,7 +9,6 @@ import MapView from 'react-native-maps';
 
 
 
-
 const API_KEY = '';
 const GOOGLE_KEY = '';
 
