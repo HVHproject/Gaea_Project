@@ -133,16 +133,20 @@ async function fetchGooglePlaces(){
     while(j < 4){
       //Basically, we need a way to check if the results[i] has photos, if it does, we grab them
       //If it doesn't we grab results[i].icon as photoref 
-      parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
-      var str = json.results[j].photos[0].html_attributions[0];
-      str = json.results[j].photos[0].html_attributions[0];
-      str = str.split('"');
-      parkStates.parks[j].htmlatt = str[1]
-      //Edge case where photos[] doesn't exist
-      //else{
-        //parkStates.parks[j].photoref = json.results[i].icon
-        //parkStates.parks[j].htmlatt = "https://www.google.com/maps"
-      //}
+      if( typeof json.results[j].photos === 'undefined')
+      {
+        parkStates.parks[j].photoref = json.results[j].icon
+        parkStates.parks[j].htmlatt = "https://www.google.com/maps"
+      }
+      else {
+        //console.log("\nPhoto Ref :", j  , " ", json.results[j].photos[0].photo_reference)
+      
+        parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
+        var str = json.results[j].photos[0].html_attributions[0];
+        str = json.results[j].photos[0].html_attributions[0];
+        str = str.split('"');
+        parkStates.parks[j].htmlatt = str[1]
+      }
       parkStates.parks[j].name = json.results[j].name
       parkStates.parks[j].coords = json.results[j].geometry.location;
       j = j + 1
