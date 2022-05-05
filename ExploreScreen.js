@@ -114,11 +114,11 @@ async function fetchGooglePlaces(){
         }
         */}
         foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-        console.log("Our htmlAtt is - ",json.results[i].photos[0].html_attributions[0], "\n")
+      
         var str = json.results[i].photos[0].html_attributions[0];
         str = json.results[i].photos[0].html_attributions[0];
         str = str.split('"');
-        foodStates.foods[i].htmlatt = str
+        foodStates.foods[i].htmlatt = str[1]
         
         foodStates.foods[i].rating = json.results[i].rating;
         foodStates.foods[i].coords = json.results[i].geometry.location;
@@ -135,7 +135,10 @@ async function fetchGooglePlaces(){
 
       if(json.results[j].photos[0]){
         parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
-        parkStates.parks[j].htmlatt = json.results[j].photos[0].html_attributions;
+        var str = json.results[j].photos[0].html_attributions[0];
+        str = json.results[j].photos[0].html_attributions[0];
+        str = str.split('"');
+        parkStates.parks[j].htmlatt = str[1]
       }
       else{
         parkStates.parks[j].photoref = json.results[i].icon
@@ -275,7 +278,7 @@ export default function App() {
               </TouchableOpacity>
               <Text>{foodStates.foods[0].name}</Text>
               <Text>{foodStates.foods[0].rating} ⭐</Text>
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[0].htmlatt[1])}>Photo credit</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[0].htmlatt)}>Photo credit</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
@@ -285,7 +288,7 @@ export default function App() {
               </TouchableOpacity>
               <Text>{foodStates.foods[1].name}</Text>
               <Text>{foodStates.foods[1].rating} ⭐</Text>
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[1].htmlatt[1])}>Photo credit</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[1].htmlatt)}>Photo credit</Text>
             </View>
           </View>
           <View style={styles.foodSpacing}>
@@ -295,7 +298,7 @@ export default function App() {
               </TouchableOpacity>
               <Text>{foodStates.foods[2].name}</Text>
               <Text>{foodStates.foods[2].rating} ⭐</Text>
-              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[2].htmlatt[1])}>Photo credit</Text>
+              <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[2].htmlatt)}>Photo credit</Text>
             </View>
           </View>
 
