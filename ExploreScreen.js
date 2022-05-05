@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView, Linking } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import Logo from './assets/images/logo.png';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -266,7 +266,9 @@ export default function App() {
           
           <View style={styles.foodSpacing}>
           <View style={styles.foodItem}>
-              <Image source={{uri: foodStates.foods[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + foodStates.foods[0].name +"/@" + foodStates.foods[0].coords[0] + "," + foodStates.foods[0].coords[1] + ",")}>
+                <Image source={{uri: foodStates.foods[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              </TouchableOpacity>
               <Text>{foodStates.foods[0].name}</Text>
               <Text>{foodStates.foods[0].rating} ⭐</Text>
               <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[0].htmlatt)}>Photo credit</Text>
@@ -274,7 +276,9 @@ export default function App() {
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
-            <Image source={{uri: foodStates.foods[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + foodStates.foods[1].name +"/@" + foodStates.foods[1].coords[0] + "," + foodStates.foods[1].coords[1] + ",")}>
+                <Image source={{uri: foodStates.foods[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              </TouchableOpacity>
               <Text>{foodStates.foods[1].name}</Text>
               <Text>{foodStates.foods[1].rating} ⭐</Text>
               <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[1].htmlatt)}>Photo credit</Text>
@@ -282,7 +286,9 @@ export default function App() {
           </View>
           <View style={styles.foodSpacing}>
             <View style={styles.foodItem}>
-            <Image source={{uri: foodStates.foods[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + foodStates.foods[2].name +"/@" + foodStates.foods[2].coords[0] + "," + foodStates.foods[2].coords[1] + ",")}>
+                <Image source={{uri: foodStates.foods[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+              </TouchableOpacity>
               <Text>{foodStates.foods[2].name}</Text>
               <Text>{foodStates.foods[2].rating} ⭐</Text>
               <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[2].htmlatt)}>Photo credit</Text>
