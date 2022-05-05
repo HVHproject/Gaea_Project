@@ -14,7 +14,7 @@ const API_KEY = '';
 const GOOGLE_KEY = '';
 
 
-class park {
+class park { 
   constructor(name, photoref, htlmlatt, coords) {
     this.name = name;
     this.photoref = photoref;
@@ -102,8 +102,20 @@ async function fetchGooglePlaces(){
     while(i < 3)
     {
         foodStates.foods[i].name = json.results[i].name;
+        {/* 
+        if(json.results[i].photos[0].photo_reference == undefined)
+        {
+          foodStates.foods[i].photoref = json.results[i].icon
+          foodStates.foods[i].htmlatt = "https://www.google.com/maps"
+        }
+        else{
         foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
         foodStates.foods[i].htmlatt = json.results[i].photos[0].html_attributions;
+        }
+        */}
+        foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
+        foodStates.foods[i].htmlatt = json.results[i].photos[0].html_attributions;
+        
         foodStates.foods[i].rating = json.results[i].rating;
         foodStates.foods[i].coords = json.results[i].geometry.location;
 
@@ -116,10 +128,17 @@ async function fetchGooglePlaces(){
     //console.log("\n PARK JSON: \n", json);
     let j = 0;
     while(j < 4){
+
+      if(json.results[j].photos[0]){
+        parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
+        parkStates.parks[j].htmlatt = json.results[j].photos[0].html_attributions;
+      }
+      else{
+        parkStates.parks[j].photoref = json.results[i].icon
+        parkStates.parks[j].htmlatt = "https://www.google.com/maps"
+      }
       parkStates.parks[j].name = json.results[j].name
-      parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
-      parkStates.parks[j].htmlatt = json.results[j].photos[0].html_attributions
-      parkStates.parks[j].coords = json.results[j].geometry.location
+      parkStates.parks[j].coords = json.results[j].geometry.location;
       j = j + 1
     }
   })
@@ -149,7 +168,37 @@ async function fetchWeatherAsync(){
           weatherStates.weathers[i].condition = json.daily[i].weather[0].main;
         }
 
-        weatherStates.weathers[i].emoji = "☁️"
+        if(weatherStates.weathers[i].condition == "Clear")
+        {
+          weatherStates.weathers[i].emoji = "01d"
+        }
+        else if(weatherStates.weathers[i].condition == "Clouds")
+        {
+          weatherStates.weathers[i].emoji = "02d"
+        }
+        else if(weatherStates.weathers[i].condition == "Snow")
+        {
+          weatherStates.weathers[i].emoji = "13d"
+        }
+        else if(weatherStates.weathers[i].condition == "Rain")
+        {
+          weatherStates.weathers[i].emoji = "10d"
+        }
+        else if(weatherStates.weathers[i].condition == "Drizzle")
+        {
+          weatherStates.weathers[i].emoji = "09d"
+        }
+        else if(weatherStates.weathers[i].condition == "Thunderstorm")
+        {
+          weatherStates.weathers[i].emoji = "11d"
+        }
+        else{
+          weatherStates.weathers[i].emoji = "50d"
+        }
+
+        weatherStates.weathers[i].emoji = "http://openweathermap.org/img/wn/" + weatherStates.weathers[i].emoji + "@2x.png"
+
+        
 
         i = i + 1;
       }
@@ -239,6 +288,13 @@ export default function App() {
               <Text style={{fontSize: 10}} onPress={() => Linking.openURL(foodStates.foods[2].htmlatt)}>Photo credit</Text>
             </View>
           </View>
+
+          <View style={styles.foodSpacing}>
+            <View style={styles.foodItem}>
+            <Image source={Logo} style={{height: 160, width: 160,}} />
+              <Text style={{fontSize: 30}} onPress={() => Linking.openURL("https://www.google.com/maps/search/restaurants/@" + State.location.latitude + "," + State.location.longitude + ",")}>More</Text>
+            </View>
+          </View>
           
         </ScrollView>
       </View>
@@ -251,6 +307,7 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[0].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[0].condition}</Text>
               <Text>{weatherStates.weathers[0].time}</Text>
               <Text>{weatherStates.weathers[0].temp} C</Text>
@@ -259,6 +316,7 @@ export default function App() {
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[1].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[1].condition}</Text>
               <Text>{weatherStates.weathers[1].time}</Text>
               <Text>{weatherStates.weathers[1].temp} C</Text>
@@ -267,6 +325,7 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[2].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[2].condition}</Text>
               <Text>{weatherStates.weathers[2].time}</Text>
               <Text>{weatherStates.weathers[2].temp} C</Text>
@@ -275,6 +334,7 @@ export default function App() {
 
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[3].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[3].condition}</Text>
               <Text>{weatherStates.weathers[3].time}</Text>
               <Text>{weatherStates.weathers[3].temp} C</Text>
@@ -283,6 +343,7 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[4].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[4].condition}</Text>
               <Text>{weatherStates.weathers[4].time}</Text>
               <Text>{weatherStates.weathers[4].temp} C</Text>
@@ -291,6 +352,7 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[5].emoji}} style={{height: 80, width: 80,}} />
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[5].condition}</Text>
               <Text>{weatherStates.weathers[5].time}</Text>
               <Text>{weatherStates.weathers[5].temp} C</Text>
@@ -299,6 +361,7 @@ export default function App() {
           
           <View style={styles.weatherSpacing}>
             <View style={styles.weatherItem}>
+              <Image source={{uri: weatherStates.weathers[6].emoji}} style={{height: 80, width: 80,}} /> 
               <Text style={styles.weatherEmoji}>{weatherStates.weathers[6].condition}</Text>
               <Text>{weatherStates.weathers[6].time}</Text>
               <Text>{weatherStates.weathers[6].temp} C</Text>
@@ -346,8 +409,8 @@ export default function App() {
 
       <MapView
       initialRegion={{
-      latitude: State.location.latitude,
-      longitude: State.location.longitude,
+      latitude: 43,
+      longitude: -75,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,}}
       showsUserLocation={true}
