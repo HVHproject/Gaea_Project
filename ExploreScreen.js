@@ -5,12 +5,13 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import React, {Component} from 'react'
 import { render } from 'react-dom';
+import MapView from 'react-native-maps';
 
 
 
 
-const API_KEY = 'weatherApiKeyHere';
-const GOOGLE_KEY = 'googleApiKeyHere';
+const API_KEY = '';
+const GOOGLE_KEY = '';
 
 
 class park {
@@ -49,7 +50,7 @@ let photoSize =
 
 
 let parkStates = {
-  parks: [new park(), new park(), new park()]
+  parks: [new park(), new park(), new park(), new park()]
 }
 
 let foodStates = {
@@ -92,6 +93,7 @@ async function fetchGooglePlaces(){
   let didLocationRun = await getLocationAsync ();
   let lat = State.location.latitude;
   let lon = State.location.longitude;
+  //Fetch restaurants 
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=2000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
     //console.log("\nJSON: \n", json);
     //Grab top 3 results names
@@ -109,16 +111,16 @@ async function fetchGooglePlaces(){
         i = i + 1;
       }
   })
-
+  //Fetch Parks
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=5000&type=park&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
     //console.log("\n PARK JSON: \n", json);
-    let i = 0;
-    while(i < 3){
-      parkStates.parks[i].name = json.results[i].name
-      parkStates.parks[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY
-      parkStates.parks[i].htmlatt = json.results[i].photos[0].html_attributions
-      parkStates.parks[i].coords = json.results[i].geometry.location
-      i = i + 1
+    let j = 0;
+    while(j < 4){
+      parkStates.parks[j].name = json.results[j].name
+      parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
+      parkStates.parks[j].htmlatt = json.results[j].photos[0].html_attributions
+      parkStates.parks[j].coords = json.results[j].geometry.location
+      j = j + 1
     }
   })
   return true
@@ -308,22 +310,48 @@ export default function App() {
 
       {/* Instagram Section */}
       <View style={styles.instaContainer}>
-      <Text style={{fontSize: 20}}>📷 Instagram Photos 📷</Text>
+      <Text style={{fontSize: 20}}>📷 Park Photos 📷</Text>
         
-      <Text>{parkStates.parks[0].name}</Text>
+      <View style={styles.row}> 
+
         <View style={styles.explorePhotos}>
+          <Text style={{fontSize: 20}}>{parkStates.parks[0].name}</Text>
           <Image source={{uri: parkStates.parks[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
-        </View>
-        <Text>{parkStates.parks[1].name}</Text>
-        <View style={styles.explorePhotos}>
-        <Image source={{uri: parkStates.parks[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
-        </View>
-        <Text>{parkStates.parks[2].name}</Text>
-        <View style={styles.explorePhotos}>
-        <Image source={{uri: parkStates.parks[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[0].htmlatt)}>Photo credit</Text>
         </View>
 
+        <View style={styles.explorePhotos}>
+          <Text style={{fontSize: 20}}>{parkStates.parks[1].name}</Text>
+          <Image source={{uri: parkStates.parks[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[1].htmlatt)}>Photo credit</Text>
         </View>
+
+      </View>
+      <View style={styles.row}> 
+
+        <View style={styles.explorePhotos}>
+          <Text style={{fontSize: 20}}>{parkStates.parks[2].name}</Text>
+          <Image source={{uri: parkStates.parks[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[2].htmlatt)}>Photo credit</Text>
+        </View>
+
+        <View style={styles.explorePhotos}>
+          <Text style={{fontSize: 20}}>{parkStates.parks[3].name}</Text>
+          <Image source={{uri: parkStates.parks[3].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[3].htmlatt)}>Photo credit</Text>
+        </View>
+      </View>
+
+      </View>
+
+      <MapView
+      initialRegion={{
+      latitude: State.location.latitude,
+      longitude: State.location.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,}}
+      showsUserLocation={true}
+      style={{height: 300, width: '100%',}}/>
       </ScrollView>
 
     </View>
@@ -381,7 +409,8 @@ const styles = StyleSheet.create({
   weatherBox: {
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingLeft: 20,
+    paddingLeft: 5,
+    paddingRight: 5,
     paddingVertical: 20,
     borderRadius: 20,
     flexDirection: 'column',
@@ -431,10 +460,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     margin: 4,
-    borderWidth: 1,
-    borderColor: 'black',
-    width: 120,
-    height: 120,
+    //borderWidth: 1,
+    //borderColor: 'black',
+    width: 160,
+    height: 200,
   },
 
   row: {
