@@ -166,8 +166,31 @@ async function fetchWeatherAsync(){
       let i = 0;
       while(i < 7)
       {
-        weatherStates.weathers[i].time = new Date(json.daily[i].dt*1000).toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'});
-
+        weatherStates.weathers[i].time = new Date(json.daily[i].dt*1000).toLocaleDateString('en-US', {year: 'numeric', month: 'numeric', day: 'numeric'});
+        let day = new Date(json.daily[i].dt*1000);
+        //console.log("\nday: ", day.getDay());
+        if(day.getDay() == 0){//sunday
+          weatherStates.weathers[i].time = "Sunday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 1){//monday
+          weatherStates.weathers[i].time = "Monday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 2){//tuesday
+          weatherStates.weathers[i].time = "Tuesday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 3){//wednesday
+          weatherStates.weathers[i].time = "Wednesday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 4){//thursday
+          weatherStates.weathers[i].time = "Thursday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 5){//friday
+          weatherStates.weathers[i].time = "Friday, " + weatherStates.weathers[i].time;
+        }
+        else if(day.getDay() == 6){//saturday
+          weatherStates.weathers[i].time = "Saturday, " + weatherStates.weathers[i].time;
+        }
+        //console.log("\ndate: ", weatherStates.weathers[i].time);
         if(i == 0)
         {
           weatherStates.weathers[i].temp = json.current.temp;
@@ -213,42 +236,6 @@ async function fetchWeatherAsync(){
         i = i + 1;
       }
       weatherStates.isLoading = false})
-      return true;
-}
-
-function fetchWeather(lat, lon){
-  //console.log("\nFETCHING THE WEATHER:\nState OBJ: \n", State, "\nLocation OBJ: \n", State.location, "\nlat and lon: \n", lat, lon);
-  fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&units=metric&APPID=${API_KEY}&units=metric`).then(res => res.json()).then(json => {
-      //Day 0 fetch
-      WeatherState['temperature0'] = json.current.temp
-      WeatherState['time0'] = new Date(json.daily[0].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition0'] = json.current.weather[0].main,
-      //Day 1 fetch
-      WeatherState['temperature1'] = json.daily[1].temp.day,
-      WeatherState['time1'] = new Date(json.daily[1].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition1'] = json.daily[1].weather[0].main,
-      //Day 2 fetch
-      WeatherState['temperature2'] = json.daily[2].temp.day,
-      WeatherState['time2'] = new Date(json.daily[2].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition2'] = json.daily[2].weather[0].main,
-      //Day 3 fetch
-      WeatherState['temperature3'] = json.daily[3].temp.day,
-      WeatherState['time3'] = new Date(json.daily[3].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition3'] = json.daily[3].weather[0].main,
-      //Day 4 fetch
-      WeatherState['temperature4'] = json.daily[4].temp.day,
-      WeatherState['time4'] = new Date(json.daily[4].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition4'] = json.daily[4].weather[0].main,
-      //Day 5 fetch
-      WeatherState['temperature5'] = json.daily[5].temp.day,
-      WeatherState['time5'] = new Date(json.daily[5].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition5'] = json.daily[5].weather[0].main,
-      //Day 6 fetch
-      WeatherState['temperature6'] = json.daily[6].temp.day,
-      WeatherState['time6'] = new Date(json.daily[6].dt*1000).toLocaleString('en-US', {weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric'}),
-      WeatherState['weatherCondition6'] = json.daily[6].weather[0].main,
-
-      WeatherState['isLoading'] = false})
       return true;
 }
 
