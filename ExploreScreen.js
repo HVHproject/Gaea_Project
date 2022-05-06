@@ -9,8 +9,8 @@ import MapView from 'react-native-maps';
 
 
 
-const API_KEY = '';
-const GOOGLE_KEY = '';
+const API_KEY = 'weatherApiKeyHere';
+const GOOGLE_KEY = 'googleApiKeyHere';
 
 
 class park { 
@@ -33,7 +33,7 @@ class food{
 }
 
 class weather{
-  contructor(temp,time,condition,emoji){
+  constructor(temp,time,condition,emoji){
     this.temp = temp;
     this.time = time;
     this.condition = condition;
@@ -100,39 +100,34 @@ async function fetchGooglePlaces(){
 
     while(i < 3)
     {
-        foodStates.foods[i].name = json.results[i].name;
-        {/* 
-        if(json.results[i].photos[0].photo_reference == undefined)
-        {
-          foodStates.foods[i].photoref = json.results[i].icon
-          foodStates.foods[i].htmlatt = "https://www.google.com/maps"
-        }
-        else{
+      foodStates.foods[i].name = json.results[i].name;
+      //If photos aren't available we resort to using the icon
+      if( typeof json.results[i].photos === 'undefined')
+      {
+        foodStates.foods[i].photoref = json.results[i].icon
+        foodStates.foods[i].htmlatt = "https://www.google.com/maps"
+      }
+      else
+      {
         foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-        foodStates.foods[i].htmlatt = json.results[i].photos[0].html_attributions;
-        }
-        */}
-        foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
-      
         var str = json.results[i].photos[0].html_attributions[0];
         str = json.results[i].photos[0].html_attributions[0];
         str = str.split('"');
         foodStates.foods[i].htmlatt = str[1]
-        
-        foodStates.foods[i].rating = json.results[i].rating;
-        foodStates.foods[i].coords = json.results[i].geometry.location;
-
-        //console.log("\nFood State: \n", foodStates.foods[i]);
-        i = i + 1;
       }
+        
+      foodStates.foods[i].rating = json.results[i].rating;
+      foodStates.foods[i].coords = json.results[i].geometry.location;
+
+      //console.log("\nFood State: \n", foodStates.foods[i]);
+      i = i + 1;
+    }
   })
   //Fetch Parks
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=5000&type=park&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
     //console.log("\n PARK JSON: \n", json);
     let j = 0;
     while(j < 4){
-      //Basically, we need a way to check if the results[i] has photos, if it does, we grab them
-      //If it doesn't we grab results[i].icon as photoref 
       if( typeof json.results[j].photos === 'undefined')
       {
         parkStates.parks[j].photoref = json.results[j].icon
@@ -376,19 +371,23 @@ export default function App() {
 
       {/* Instagram Section */}
       <View style={styles.instaContainer}>
-      <Text style={{fontSize: 20}}>📷 Park Photos 📷</Text>
+      <Text style={{fontSize: 20}}>📷 Outdoor Photos 📷</Text>
         
       <View style={styles.row}> 
 
         <View style={styles.explorePhotos}>
-          <Text style={{fontSize: 20}}>{parkStates.parks[0].name}</Text>
-          <Image source={{uri: parkStates.parks[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + parkStates.parks[0].name +"/@" + parkStates.parks[0].coords[0] + "," + parkStates.parks[0].coords[1] + ",")}>
+            <Image source={{uri: parkStates.parks[0].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          </TouchableOpacity>
+          <Text style={{fontSize: 16}}>{parkStates.parks[0].name}</Text>
           <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[0].htmlatt)}>Photo credit</Text>
         </View>
 
         <View style={styles.explorePhotos}>
-          <Text style={{fontSize: 20}}>{parkStates.parks[1].name}</Text>
-          <Image source={{uri: parkStates.parks[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + parkStates.parks[1].name +"/@" + parkStates.parks[1].coords[0] + "," + parkStates.parks[1].coords[1] + ",")}>
+            <Image source={{uri: parkStates.parks[1].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          </TouchableOpacity>
+          <Text style={{fontSize: 16}}>{parkStates.parks[1].name}</Text>
           <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[1].htmlatt)}>Photo credit</Text>
         </View>
 
@@ -396,14 +395,18 @@ export default function App() {
       <View style={styles.row}> 
 
         <View style={styles.explorePhotos}>
-          <Text style={{fontSize: 20}}>{parkStates.parks[2].name}</Text>
-          <Image source={{uri: parkStates.parks[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + parkStates.parks[2].name +"/@" + parkStates.parks[2].coords[0] + "," + parkStates.parks[2].coords[1] + ",")}>
+            <Image source={{uri: parkStates.parks[2].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          </TouchableOpacity>
+          <Text style={{fontSize: 16}}>{parkStates.parks[2].name}</Text>
           <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[2].htmlatt)}>Photo credit</Text>
         </View>
 
         <View style={styles.explorePhotos}>
-          <Text style={{fontSize: 20}}>{parkStates.parks[3].name}</Text>
-          <Image source={{uri: parkStates.parks[3].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          <TouchableOpacity onPress={() => Linking.openURL("https://www.google.com/maps/search/" + parkStates.parks[3].name +"/@" + parkStates.parks[3].coords[0] + "," + parkStates.parks[3].coords[1] + ",")}>
+            <Image source={{uri: parkStates.parks[3].photoref}} style={{height: 160, width: 160, paddingTop: 0, borderRadius: 20,}} />
+          </TouchableOpacity>
+          <Text style={{fontSize: 16}}>{parkStates.parks[3].name}</Text>
           <Text style={{fontSize: 10}} onPress={() => Linking.openURL(parkStates.parks[3].htmlatt)}>Photo credit</Text>
         </View>
       </View>
@@ -419,7 +422,6 @@ export default function App() {
       showsUserLocation={true}
       style={{height: 300, width: '100%',}}/>
       </ScrollView>
-
     </View>
   );
 }
@@ -526,33 +528,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     margin: 4,
-    //borderWidth: 1,
-    //borderColor: 'black',
-    width: 160,
-    height: 200,
+    borderRadius: 20,
+    width: '33%',
+    height: 220,
+    flex: 1
   },
 
   row: {
     flexDirection: 'row',
   },
-
-  newsTitleAndBox: {
-    alignItems: 'center',
-    backgroundColor: '#eee',
-    borderRadius: 60,
-    padding: 10,
-  },
-
-  newsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-
-  newsItem: {
-    padding: 20,
-    flex: 1,
-  },
-  
-
 
 });
