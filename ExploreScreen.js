@@ -94,8 +94,6 @@ async function fetchGooglePlaces(){
   let lon = State.location.longitude;
   //Fetch restaurants 
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=2000&type=restaurant&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
-    //console.log("\nJSON: \n", json);
-    //Grab top 3 results names
     let i = 0;
 
     while(i < 3)
@@ -111,7 +109,6 @@ async function fetchGooglePlaces(){
       {
         foodStates.foods[i].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[i].photos[0].photo_reference + "&key=" + GOOGLE_KEY;
         var str = json.results[i].photos[0].html_attributions[0];
-        str = json.results[i].photos[0].html_attributions[0];
         str = str.split('"');
         foodStates.foods[i].htmlatt = str[1]
       }
@@ -119,30 +116,25 @@ async function fetchGooglePlaces(){
       foodStates.foods[i].rating = json.results[i].rating;
       foodStates.foods[i].coords = json.results[i].geometry.location;
 
-      //console.log("\nFood State: \n", foodStates.foods[i]);
       i = i + 1;
     }
   })
   //Fetch Parks
   fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat}%2C${lon}&radius=5000&type=park&key=${GOOGLE_KEY}`).then(res => res.json()).then(json => {
-    //console.log("\n PARK JSON: \n", json);
     let j = 0;
     while(j < 4){
+      parkStates.parks[j].name = json.results[j].name
       if( typeof json.results[j].photos === 'undefined')
       {
         parkStates.parks[j].photoref = json.results[j].icon
         parkStates.parks[j].htmlatt = "https://www.google.com/maps"
       }
       else {
-        //console.log("\nPhoto Ref :", j  , " ", json.results[j].photos[0].photo_reference)
-      
         parkStates.parks[j].photoref = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=" + photoSize.foodPhotoMaxWidth + "&photo_reference=" + json.results[j].photos[0].photo_reference + "&key=" + GOOGLE_KEY
         var str = json.results[j].photos[0].html_attributions[0];
-        str = json.results[j].photos[0].html_attributions[0];
         str = str.split('"');
         parkStates.parks[j].htmlatt = str[1]
       }
-      parkStates.parks[j].name = json.results[j].name
       parkStates.parks[j].coords = json.results[j].geometry.location;
       j = j + 1
     }
@@ -369,7 +361,7 @@ export default function App() {
         </ScrollView>
       </View>
 
-      {/* Instagram Section */}
+      {/* Outdoor Section */}
       <View style={styles.instaContainer}>
       <Text style={{fontSize: 20}}>📷 Outdoor Photos 📷</Text>
         
