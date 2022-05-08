@@ -10,13 +10,16 @@ Apple installation    : https://apps.apple.com/app/expo-go/id982107779
 #### Step 2: Download this project and save it in a folder.
 
 #### Step 3: In that folder, run npm install.
+run npm install react-native-maps  
 This should download everything you need to run the project. If errors occur, you may need to install missing packages.  
 As time passes, packages can update and something could break.  
 
 #### Step 4: Get the needed API keys.
-Weather API : https://openweathermap.org/api  
-Google API  : https://mapsplatform.google.com/  
-Using their free plans is enough for this project to serve its purpose. This app isn't made for widescale use, just a way for us to learn.  
+Weather API              : https://openweathermap.org/api  
+Weather API Key Tutorial : https://openweathermap.org/appid  
+Google API               : https://mapsplatform.google.com/  
+Google API Key Tutorial  : https://youtu.be/Tva5HvZLN7g?t=52 (0:54 - 4:10) by https://www.youtube.com/channel/UCeDirq_9MAW2JkbAlSjhWiQ  
+Using their free plans is enough for this project to serve its purpose. This app isn't made for widescale use.  
 
 Make sure these aren't public (if you make a fork of this or share it with friends) so you don't have someone running up your credits!  
 
