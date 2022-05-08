@@ -19,7 +19,7 @@ Weather API              : https://openweathermap.org/api
 Weather API Key Tutorial : https://openweathermap.org/appid  
 Google API               : https://mapsplatform.google.com/  
 Google API Key Tutorial  : https://youtu.be/Tva5HvZLN7g?t=52 (0:54 - 4:10) by https://www.youtube.com/channel/UCeDirq_9MAW2JkbAlSjhWiQ  
-Using their free plans is enough for this project to serve its purpose. This app isn't made for widescale use.  
+Using their free plans is enough for this project to serve its purpose. This app isn't made for wide scale use.  
 
 Make sure these aren't public (if you make a fork of this or share it with friends) so you don't have someone running up your credits!  
 
@@ -29,7 +29,7 @@ Google API  : Line 13, replace "googleApiKeyHere" with your Google API key
 
 #### Step 6: Run "npm start" in the terminal
 
-#### Step 7: Scan the QR code with the Expo app (optionally you can install an android emulator on your computer and press a in the terminal.)
+#### Step 7: Scan the QR code with the Expo app (optionally you can install an android emulator on your computer and press "a" in the terminal.)
 At this point everything should be good to go! If you run into issues, please submit an issue.  
 
 #### Step 8 (optional): Install an Android emulator to run the app on your computer.
